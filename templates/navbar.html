@@ -1,0 +1,41 @@
+<div class="container-fluid text-center">
+  <div class="row sticky-top">
+    <nav class="navbar navbar-expand-md navbar-light bg-light">
+      <a class="navbar-brand fs-3 ms-5" href="/"><span> Personalized Fitness</span></a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNavDropdown"
+        aria-controls="navbarNavDropdown" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarNavDropdown">
+        <ul class="navbar-nav ms-auto me-auto fs-5">
+          <li class="nav-item">
+            <a class="nav-link active" aria-current="page" href="/">Home</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="/recommendation">Recommendation</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'packages' %}">Membership</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'exercise_list' %}">Exercises</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'food_list' %}">Foods</a>
+          </li>
+          {% if user.is_authenticated %}
+          <li class="nav-item">
+           <span class="nav-link">Hello, {{request.user}}</span>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+          </li>
+          {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+          </li>
+          {% endif %}
+        </ul>
+      </div>
+    </nav>
+  </div>

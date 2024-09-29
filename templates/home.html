@@ -1,0 +1,18 @@
+{% extends 'main.html' %}
+
+{% block content %}
+{% load static %}
+
+<style>
+    body {
+        background: url("{% static 'images/workout.jpg' %}") no-repeat center center;
+        background-size: cover;
+        height: 100vh;
+    }
+</style>
+
+<div class="d-flex justify-content-center align-items-center" style="height: 100vh;">
+    <h1 class="text-white">Welcome to the Fitness Hub</h1>
+</div>
+
+{% endblock content %}
