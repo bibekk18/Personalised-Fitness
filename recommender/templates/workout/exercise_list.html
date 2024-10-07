@@ -3,9 +3,9 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<div class="container mt-5">
-    <h2>Exercises</h2>
-    <a href="{% url 'exercise_create' %}" class="btn btn-primary mb-3">Add Exercise</a>
+<div class="container py-5 text-center">
+    <a href="{% url 'category_list' %}" class="btn btn-primary mb-5">Add Workout Catogary</a>
+    <a href="{% url 'exercise_create' %}" class="btn btn-primary mb-5">Add Exercise</a>
     <table class="table table-bordered">
         <thead>
             <tr>

@@ -1,9 +1,8 @@
 {% extends 'main.html' %}
 
 {% block content %}
-<div class="mt-4">
+<div class="py-5 text-center">
     <a href="{% url 'food_create' %}" class="btn btn-primary mb-4">Add New FoodItem</a>
-    <h2 class="mb-4">Food List</h2>
 
     <table id="foodTable" class="table table-bordered table-striped">
         <thead class="thead-dark">

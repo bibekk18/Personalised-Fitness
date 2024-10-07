@@ -1,10 +1,14 @@
 from django.shortcuts import render,redirect,get_object_or_404
 from django.contrib import messages
+from django.http import HttpResponseRedirect
+from django.urls import reverse
 
 from django.contrib.auth import authenticate,login,logout
 from .forms import UserRegistrationForm,FoodForm,WorkoutCategoryForm,ExerciseForm
 from django.contrib.auth.decorators import login_required
 from .models import Food,WorkoutCategory,Exercise
+from membership.models import Package, Booking
+from django.contrib.auth.models import User
 
 
 from recommender.functions import calculate_required_calories,recommend_diet,recommend_workout
@@ -72,8 +76,7 @@ def registerPage(request):
             user.save()
             login(request,user)
             return redirect('home')
-        else:
-            messages.info(request,'An Error occured durig registration')
+        
     return render(request, 'accounts/register.html',{'form':form})
 
 def loginPage(request):
@@ -94,13 +97,38 @@ def logoutUser(request):
     return redirect('home')
 
 
+def is_admin(user):
+    return user.is_superuser
+
+def admin_required(view_func):
+    def wrapper(request, *args, **kwargs):
+        if not is_admin(request.user):
+            messages.error(request, "You are not allowed to access this page.")
+            return HttpResponseRedirect(reverse('home'))
+        return view_func(request, *args, **kwargs)
+    return wrapper
+
+@login_required(login_url='login')
+@admin_required
+def dashboard(request):
+    context = {
+        'foodCount': Food.objects.count(),
+        'exerciseCount': Exercise.objects.count(),
+        'userCount': User.objects.count(),
+        'memberCount': Booking.objects.count(),
+        'packageCount': Package.objects.count(),
+    }
+    return render(request, 'dashboard.html', context)
+
 # CRUD Views for Food
 @login_required(login_url='login')
+@admin_required
 def food_list(request):
     foods = Food.objects.all()
     return render(request, 'foods/food_list.html', {'foods': foods})
 
 @login_required(login_url='login')
+@admin_required
 def food_create(request):
     if request.method == 'POST':
         form = FoodForm(request.POST)
@@ -113,6 +141,7 @@ def food_create(request):
     return render(request, 'foods/food_form.html', {'form': form})
 
 @login_required(login_url='login')
+@admin_required
 def food_edit(request, pk):
     food = get_object_or_404(Food, pk=pk)
     if request.method == 'POST':
@@ -126,6 +155,7 @@ def food_edit(request, pk):
     return render(request, 'foods/food_form.html', {'form': form})
 
 @login_required(login_url='login')
+@admin_required
 def food_delete(request, pk):
     food = get_object_or_404(Food, pk=pk)
     if request.method == 'POST':
@@ -137,11 +167,13 @@ def food_delete(request, pk):
 
 # CRUD Views for WorkoutCategory
 @login_required(login_url='login')
+@admin_required
 def category_list(request):
     categories = WorkoutCategory.objects.all()
     return render(request, 'workout/category_list.html', {'categories': categories})
 
 @login_required(login_url='login')
+@admin_required
 def category_create(request):
     if request.method == 'POST':
         form = WorkoutCategoryForm(request.POST)
@@ -154,6 +186,7 @@ def category_create(request):
     return render(request, 'workout/category_form.html', {'form': form})
 
 @login_required(login_url='login')
+@admin_required
 def category_update(request, pk):
     category = get_object_or_404(WorkoutCategory, pk=pk)
     if request.method == 'POST':
@@ -167,6 +200,7 @@ def category_update(request, pk):
     return render(request, 'workout/category_form.html', {'form': form})
 
 @login_required(login_url='login')
+@admin_required
 def category_delete(request, pk):
     category = get_object_or_404(WorkoutCategory, pk=pk)
     if request.method == 'POST':
@@ -178,11 +212,13 @@ def category_delete(request, pk):
 
 # CRUD Views for Exercise
 @login_required(login_url='login')
+@admin_required
 def exercise_list(request):
     exercises = Exercise.objects.all()
     return render(request, 'workout/exercise_list.html', {'exercises': exercises})
 
 @login_required(login_url='login')
+@admin_required
 def exercise_create(request):
     if request.method == 'POST':
         form = ExerciseForm(request.POST, request.FILES)
@@ -195,6 +231,7 @@ def exercise_create(request):
     return render(request, 'workout/exercise_form.html', {'form': form})
 
 @login_required(login_url='login')
+@admin_required
 def exercise_update(request, pk):
     exercise = get_object_or_404(Exercise, pk=pk)
     if request.method == 'POST':
@@ -208,11 +245,13 @@ def exercise_update(request, pk):
     return render(request, 'workout/exercise_form.html', {'form': form})
 
 @login_required(login_url='login')
+@admin_required
 def exercise_detail(request, pk):
     exercise = get_object_or_404(Exercise, pk=pk)
     return render(request, 'workout/exercise_detail.html', {'exercise': exercise})
 
 @login_required(login_url='login')
+@admin_required
 def exercise_delete(request, pk):
     exercise = get_object_or_404(Exercise, pk=pk)
     if request.method == 'POST':
